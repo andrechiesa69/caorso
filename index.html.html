@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>A.S.D. CAORSO 1951 - Realtà Aumentata WebAR</title>
+  <!-- Librerie A-Frame e MindAR per Image Tracking -->
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #111;
+      color: #fff;
+    }
+
+    /* Overlay grafico della fotocamera */
+    #ui-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .badge-header {
+      background: rgba(10, 25, 47, 0.85);
+      border: 1px solid rgba(0, 162, 255, 0.4);
+      padding: 12px 24px;
+      border-radius: 50px;
+      backdrop-filter: blur(8px);
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .badge-header h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #00d2ff;
+    }
+
+    .badge-header p {
+      margin: 4px 0 0;
+      font-size: 12px;
+      color: #e0e0e0;
+    }
+
+    /* Mirino di scansionamento */
+    .scanner-target {
+      width: 220px;
+      height: 310px;
+      border: 2px dashed rgba(0, 210, 255, 0.6);
+      border-radius: 50%;
+      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.35);
+      position: relative;
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { border-color: rgba(0, 210, 255, 0.4); transform: scale(1); }
+      50% { border-color: rgba(0, 210, 255, 0.9); transform: scale(1.02); }
+    }
+
+    .info-footer {
+      background: rgba(0, 0, 0, 0.75);
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 13px;
+      color: #fff;
+      text-align: center;
+      pointer-events: auto;
+    }
+
+    /* Modal per il test diretto */
+    #fallback-btn {
+      position: absolute;
+      bottom: 70px;
+      z-index: 11;
+      background: #00d2ff;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      font-weight: bold;
+      border-radius: 30px;
+      cursor: pointer;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Overlay UI -->
+  <div id="ui-overlay">
+    <div class="badge-header">
+      <h1>A.S.D. CAORSO 1951</h1>
+      <p>Realtà Aumentata Ufficiale</p>
+    </div>
+
+    <div class="scanner-target" id="scanner-box"></div>
+
+    <div class="info-footer">
+      Inquadra il logo dell'A.S.D. Caorso col telefono.<br>
+      <strong>Clicca poi sul modello 3D per i risultati di Tuttocampo!</strong>
+    </div>
+  </div>
+
+  <button id="fallback-btn" onclick="openTuttocampo()">Vai direttamente a Tuttocampo.it</button>
+
+  <!-- Scena MindAR + A-Frame -->
+  <a-scene 
+    mindar-image="imageTargetSrc: ./target.mind; autoStart: true; uiScanning: #scanner-box;" 
+    color-space="sRGB" 
+    embedded 
+    renderer="colorManagement: true, physicallyCorrectLights: true" 
+    vr-mode-ui="enabled: false" 
+    device-orientation-permission-ui="enabled: false">
+
+    <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse" raycaster="far: 10000; objects: .clickable"></a-camera>
+
+    <!-- Target identificato dal file target.mind -->
+    <a-entity id="caorso-target" mindar-image-target="targetIndex: 0">
+      
+      <!-- Modello 3D sovrapposto (Scudo A.S.D. Caorso in 3D) -->
+      <a-group class="clickable" id="3d-logo-group" onclick="openTuttocampo()">
+        
+        <!-- Base Ovale Esterna metallica -->
+        <a-cylinder position="0 0 0" rotation="90 0 0" radius="0.55" height="0.05" color="#b0b5bc" metalness="0.8" roughness="0.2"></a-cylinder>
+        
+        <!-- Superficie Blu superiore -->
+        <a-cylinder position="0 0.1 0.03" rotation="90 0 0" radius="0.5" height="0.04" color="#1a62bf"></a-cylinder>
+        
+        <!-- Superficie Bianca inferiore -->
+        <a-cylinder position="0 -0.1 0.03" rotation="90 0 0" radius="0.5" height="0.04" color="#ffffff"></a-cylinder>
+
+        <!-- Testo 3D / Dettagli -->
+        <a-text value="A.S.D." position="0 -0.05 0.06" align="center" color="#000000" scale="0.35 0.35 0.35" font="kelsonsans"></a-text>
+        <a-text value="CAORSO" position="0 -0.20 0.06" align="center" color="#000000" scale="0.55 0.55 0.55" font="kelsonsans"></a-text>
+        <a-text value="1951" position="0 -0.35 0.06" align="center" color="#000000" scale="0.3 0.3 0.3" font="kelsonsans"></a-text>
+
+        <!-- Animazione di rotazione fluttuante -->
+        <a-animation attribute="rotation" dur="6000" fill="forwards" to="0 360 0" repeat="indefinite" easing="linear"></a-animation>
+      </a-group>
+
+      <!-- Luce ambiente orientata al target -->
+      <a-light type="directional" color="#ffffff" intensity="1.2" position="1 2 3"></a-light>
+      <a-light type="ambient" color="#ffffff" intensity="0.8"></a-light>
+    </a-entity>
+  </a-scene>
+
+  <script>
+    // Link diretto alla scheda ufficiale su Tuttocampo.it
+    const TUTTOCAMPO_URL = "https://www.tuttocampo.it/EmiliaRomagna/SecondaCategoria/GironeBParma/Squadra/Caorso/1000541/Scheda";
+
+    function openTuttocampo() {
+      // Effetto apertura finestra diretta
+      window.location.href = TUTTOCAMPO_URL;
+    }
+
+    // Gestione degli eventi di tracciamento MindAR
+    document.addEventListener("DOMContentLoaded", () => {
+      const targetEntity = document.querySelector("#caorso-target");
+      const logoGroup = document.querySelector("#3d-logo-group");
+
+      if (targetEntity) {
+        targetEntity.addEventListener("targetFound", () => {
+          console.log("Target visivo Caorso trovato!");
+        });
+
+        targetEntity.addEventListener("targetLost", () => {
+          console.log("Target visivo perso.");
+        });
+      }
+    });
+  </script>
+</body>
+</html>
