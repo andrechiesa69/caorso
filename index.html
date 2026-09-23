@@ -1,257 +1,48 @@
 <!DOCTYPE html>
 <html lang="it">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>A.S.D. Caorso 1951 - WebAR</title>
-  
-  <!-- A-Frame e MindAR -->
-  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MindAR - Test Cubo Rosso</title>
 
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: transparent !important;
-    }
+    <!-- Script di A-Frame e MindAR -->
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-    video {
-      position: absolute !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
-      object-fit: cover !important;
-      z-index: -2 !important;
-    }
-
-    a-scene {
-      width: 100% !important;
-      height: 100% !important;
-      position: absolute !important;
-      top: 0 !important;
-      left: 0 !important;
-    }
-
-    /* Intestazione */
-    #header {
-      position: fixed;
-      top: 15px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(10, 25, 47, 0.85);
-      border: 1px solid #1e3a8a;
-      padding: 10px 20px;
-      border-radius: 20px;
-      text-align: center;
-      color: white;
-      z-index: 999;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-      pointer-events: none;
-    }
-
-    #header h1 {
-      margin: 0;
-      font-size: 16px;
-      color: #38bdf8;
-      letter-spacing: 1px;
-    }
-
-    #header p {
-      margin: 3px 0 0 0;
-      font-size: 11px;
-      color: #cbd5e1;
-    }
-
-    /* Pulsante diretto in basso */
-    #tuttocampo-btn {
-      position: fixed;
-      bottom: 25px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #0284c7;
-      color: white;
-      text-decoration: none;
-      padding: 12px 24px;
-      border-radius: 25px;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      font-weight: bold;
-      font-size: 14px;
-      z-index: 999;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-      display: block;
-      cursor: pointer;
-    }
-  </style>
-
-  <script>
-    function openLink() {
-      window.location.href = 'https://www.tuttocampo.it/EmiliaRomagna/SecondaCategoria/GironeBParma/Squadra/Caorso/1000541/Scheda';
-    }
-
-    AFRAME.registerComponent('click-redirect', {
-      init: function () {
-        var el = this.el;
-        el.addEventListener('click', openLink);
-        el.addEventListener('mousedown', openLink);
-        el.addEventListener('touchstart', openLink);
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
       }
-    });
-  </script>
-</head>
-<body>
+    </style>
+  </head>
+  <body>
+    <!-- Scena AR: collega il file targets.mind -->
+    <a-scene
+      mindar-image="imageTargetSrc: ./targets.mind;"
+      color-space="sRGB"
+      renderer="colorManagement: true, physicallyCorrectLights"
+      vr-mode-ui="enabled: false"
+      device-orientation-permission-ui="enabled: false"
+    >
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-  <div id="header">
-    <h1>A.S.D. CAORSO 1951</h1>
-    <p>Inquadra il logo e tocca lo stemma per aprire Tuttocampo</p>
-  </div>
-
-  <a id="tuttocampo-btn" href="https://www.tuttocampo.it/EmiliaRomagna/SecondaCategoria/GironeBParma/Squadra/Caorso/1000541/Scheda">
-    Vai direttamente a Tuttocampo.it
-  </a>
-
-  <!-- Canvas di rendering per lo stemma ufficiale dell'A.S.D. Caorso -->
-  <canvas id="logo-canvas" width="512" height="680" style="display:none;"></canvas>
-
-  <script>
-    function generateLogoTexture() {
-      const canvas = document.getElementById('logo-canvas');
-      const ctx = canvas.getContext('2d');
-
-      // Bordo e Sfondo Ovale Principale
-      ctx.fillStyle = "#0284c7";
-      ctx.beginPath();
-      ctx.ellipse(256, 340, 230, 310, 0, 0, 2 * Math.PI);
-      ctx.fill();
-
-      ctx.fillStyle = "#ffffff";
-      ctx.beginPath();
-      ctx.ellipse(256, 340, 220, 300, 0, 0, 2 * Math.PI);
-      ctx.fill();
-
-      // Parte Sinistra Azzurra dello Stemma
-      ctx.fillStyle = "#0284c7";
-      ctx.beginPath();
-      ctx.ellipse(256, 340, 210, 290, 0, 0, 2 * Math.PI);
-      ctx.fill();
-
-      // Diagonale Bianca per la metà destra
-      ctx.fillStyle = "#ffffff";
-      ctx.beginPath();
-      ctx.moveTo(100, 600);
-      ctx.lineTo(466, 120);
-      ctx.lineTo(466, 630);
-      ctx.lineTo(100, 630);
-      ctx.closePath();
-      ctx.fill();
-
-      // Bordo interno ovale scuro
-      ctx.strokeStyle = "#0284c7";
-      ctx.lineWidth = 10;
-      ctx.beginPath();
-      ctx.ellipse(256, 340, 210, 290, 0, 0, 2 * Math.PI);
-      ctx.stroke();
-
-      // Disegno della Torre/Rocca centrale di Caorso
-      ctx.fillStyle = "#0a192f";
-      
-      // Base della rocca
-      ctx.fillRect(206, 190, 100, 80);
-      
-      // Tre Torrette Superiori
-      ctx.fillRect(196, 150, 30, 50);
-      ctx.fillRect(241, 140, 30, 60);
-      ctx.fillRect(286, 150, 30, 50);
-
-      // Dettagli Merli
-      ctx.fillRect(190, 140, 12, 15);
-      ctx.fillRect(218, 140, 12, 15);
-      ctx.fillRect(235, 130, 12, 15);
-      ctx.fillRect(265, 130, 12, 15);
-      ctx.fillRect(282, 140, 12, 15);
-      ctx.fillRect(310, 140, 12, 15);
-
-      // Finestre e Portone
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(241, 220, 30, 50); // Portone
-      ctx.fillRect(220, 170, 12, 20); // Finestra SX
-      ctx.fillRect(280, 170, 12, 20); // Finestra DX
-
-      // Testi A.S.D. - CAORSO - 1951
-      ctx.fillStyle = "#0a192f";
-      ctx.font = "900 36px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("A.S.D.", 330, 310);
-
-      ctx.font = "900 52px sans-serif";
-      ctx.fillText("CAORSO", 256, 420);
-
-      ctx.font = "bold 38px sans-serif";
-      ctx.fillText("1951", 256, 490);
-
-      return canvas.toDataURL();
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const sceneEl = document.querySelector('a-scene');
-      const applyTexture = () => {
-        const plane = document.querySelector('#logo-plane');
-        if (plane) {
-          plane.setAttribute('material', 'src', generateLogoTexture());
-        }
-      };
-
-      if (sceneEl.hasLoaded) {
-        applyTexture();
-      } else {
-        sceneEl.addEventListener('loaded', applyTexture);
-      }
-    });
-  </script>
-
-  <!-- Attributo imageTargetSrc impostato su ./targets.mind -->
-  <a-scene 
-    mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiScanning: yes;" 
-    embedded
-    color-space="sRGB" 
-    renderer="colorManagement: true, physicallyCorrectLights, alpha: true" 
-    vr-mode-ui="enabled: false" 
-    device-orientation-permission-ui="enabled: true"
-    cursor="rayOrigin: mouse; fuse: false"
-    raycaster="objects: .clickable; interval: 100">
-
-    <a-camera position="0 0 0" look-controls="enabled: false" raycaster="objects: .clickable; far: 10000; near: 0"></a-camera>
-
-    <a-entity mindar-image-target="targetIndex: 0">
-      
-      <!-- Ombra per staccare dal foglio -->
-      <a-plane 
-        position="0 -0.05 0.05" 
-        width="1.1" 
-        height="1.4" 
-        material="color: #000000; transparent: true; opacity: 0.35">
-      </a-plane>
-
-      <!-- Stemma Ovale in Primo Piano (Stacco tridimensionale z=0.35) -->
-      <a-plane 
-        id="logo-plane"
-        class="clickable" 
-        click-redirect 
-        position="0 0 0.35" 
-        width="1.0" 
-        height="1.3" 
-        material="transparent: true; alphaTest: 0.1"
-        animation__pulse="property: scale; to: 1.06 1.06 1.06; dir: alternate; loop: true; dur: 1400; easing: easeInOutSine">
-      </a-plane>
-
-    </a-entity>
-
-  </a-scene>
-
-</body>
+      <!-- Target con indice 0 (il primo/unico target nel file .mind) -->
+      <a-entity mindar-image-target="targetIndex: 0">
+        <!-- 
+          Cubo Rosso:
+          - color: rosso (#FF0000)
+          - position: X Y Z (0.5 unità sopra il centro del target)
+          - scale: dimensioni del cubo (0.5 x 0.5 x 0.5 metri)
+          - animation: una leggera rotazione continua per renderlo più visibile
+        -->
+        <a-box
+          position="0 0.25 0"
+          scale="0.5 0.5 0.5"
+          material="color: #FF0000; roughness: 0.3; metalness: 0.1;"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 4000; easing: linear"
+        >
+        </a-box>
+      </a-entity>
+    </a-scene>
+  </body>
 </html>
