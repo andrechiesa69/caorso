@@ -91,7 +91,7 @@
 
   <script>
     function openLink() {
-      window.location.href = 'https://www.tuttocampo.it';
+      window.location.href = 'https://www.tuttocampo.it/EmiliaRomagna/SecondaCategoria/GironeBParma/Squadra/Caorso/1000541/Scheda';
     }
 
     AFRAME.registerComponent('click-redirect', {
@@ -102,6 +102,15 @@
         el.addEventListener('touchstart', openLink);
       }
     });
+
+    // Se l'immagine logo.png non viene trovata, gestisce l'errore ed evita il quadrato nero
+    function handleImageError() {
+      console.warn("Immagine logo.png non trovata. Attivazione stemma 3D alternativo.");
+      var plane = document.querySelector('#logo-plane');
+      var fallback = document.querySelector('#fallback-3d');
+      if (plane) plane.setAttribute('visible', 'false');
+      if (fallback) fallback.setAttribute('visible', 'true');
+    }
   </script>
 </head>
 <body>
@@ -111,7 +120,7 @@
     <p>Inquadra il logo e tocca lo stemma per aprire Tuttocampo</p>
   </div>
 
-  <a id="tuttocampo-btn" href="https://www.tuttocampo.it">
+  <a id="tuttocampo-btn" href="https://www.tuttocampo.it/EmiliaRomagna/SecondaCategoria/GironeBParma/Squadra/Caorso/1000541/Scheda">
     Vai direttamente a Tuttocampo.it
   </a>
 
@@ -126,16 +135,26 @@
     raycaster="objects: .clickable; interval: 100">
 
     <a-assets>
-      <!-- File del logo caricato nella stessa cartella di GitHub -->
-      <img id="logo-img" src="./logo.png" crossorigin="anonymous">
+      <img id="logo-img" src="./logo.png" crossorigin="anonymous" onerror="handleImageError()">
     </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false" raycaster="objects: .clickable; far: 10000; near: 0"></a-camera>
 
     <a-entity mindar-image-target="targetIndex: 0">
       
-      <!-- Logo interattivo in Realtà Aumentata -->
+      <!-- Area Cliccabile Invisibile -->
       <a-plane 
+        class="clickable" 
+        click-redirect 
+        position="0 0 0.2" 
+        width="1.8" 
+        height="1.8" 
+        material="transparent: true; opacity: 0.001">
+      </a-plane>
+
+      <!-- Opzione 1: Immagine del Logo -->
+      <a-plane 
+        id="logo-plane"
         class="clickable" 
         click-redirect 
         position="0 0 0.1" 
@@ -144,6 +163,42 @@
         material="src: #logo-img; transparent: true; alphaTest: 0.5"
         animation__pulse="property: scale; to: 1.08 1.08 1.08; dir: alternate; loop: true; dur: 1200; easing: easeInOutSine">
       </a-plane>
+
+      <!-- Opzione 2: Stemma 3D di Riserva (Si attiva solo se manca logo.png) -->
+      <a-entity 
+        id="fallback-3d"
+        visible="false"
+        position="0 0 0.1"
+        animation__rotate="property: rotation; to: 0 360 0; loop: true; dur: 7000; easing: linear">
+        
+        <a-cylinder 
+          class="clickable"
+          click-redirect
+          position="0 0 0" 
+          rotation="90 0 0" 
+          radius="0.55" 
+          height="0.06" 
+          material="color: #0284c7; metalness: 0.6; roughness: 0.2">
+        </a-cylinder>
+
+        <a-torus 
+          class="clickable"
+          click-redirect
+          position="0 0 0" 
+          rotation="90 0 0" 
+          radius="0.55" 
+          radius-tubular="0.02" 
+          material="color: #f59e0b; metalness: 0.8; roughness: 0.2">
+        </a-torus>
+
+        <a-text 
+          value="CAORSO\n1951" 
+          align="center" 
+          position="0 0 0.04" 
+          scale="0.8 0.8 0.8" 
+          color="#ffffff">
+        </a-text>
+      </a-entity>
 
     </a-entity>
 
