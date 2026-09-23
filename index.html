@@ -115,49 +115,86 @@
     Vai direttamente a Tuttocampo.it
   </a>
 
-  <!-- Canvas di supporto per conversione grafica dello stemma -->
-  <canvas id="logo-canvas" width="512" height="512" style="display:none;"></canvas>
+  <!-- Canvas di rendering per lo stemma ufficiale dell'A.S.D. Caorso -->
+  <canvas id="logo-canvas" width="512" height="680" style="display:none;"></canvas>
 
   <script>
-    // Generazione dinamica della grafica dello stemma Caorso su Canvas 2D
     window.addEventListener('DOMContentLoaded', () => {
       const canvas = document.getElementById('logo-canvas');
       const ctx = canvas.getContext('2d');
 
-      // Sfondo Ovale Bianco/Azzurro
-      ctx.fillStyle = "#ffffff";
-      ctx.beginPath();
-      ctx.ellipse(256, 256, 200, 240, 0, 0, 2 * Math.PI);
-      ctx.fill();
-
+      // Bordo e Sfondo Ovale Principale
       ctx.fillStyle = "#0284c7";
       ctx.beginPath();
-      ctx.ellipse(256, 256, 190, 230, 0, 0, 2 * Math.PI);
+      ctx.ellipse(256, 340, 230, 310, 0, 0, 2 * Math.PI);
       ctx.fill();
 
-      // Taglio bicolore interno
       ctx.fillStyle = "#ffffff";
       ctx.beginPath();
-      ctx.moveTo(100, 350);
-      ctx.lineTo(412, 180);
-      ctx.lineTo(412, 450);
-      ctx.lineTo(100, 450);
+      ctx.ellipse(256, 340, 220, 300, 0, 0, 2 * Math.PI);
+      ctx.fill();
+
+      // Parte Sinistra Azzurra dello Stemma
+      ctx.fillStyle = "#0284c7";
+      ctx.beginPath();
+      ctx.ellipse(256, 340, 210, 290, 0, 0, 2 * Math.PI);
+      ctx.fill();
+
+      // Diagonale Bianca per la metà destra
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.moveTo(100, 600);
+      ctx.lineTo(466, 120);
+      ctx.lineTo(466, 630);
+      ctx.lineTo(100, 630);
       ctx.closePath();
       ctx.fill();
 
-      // Testo A.S.D. CAORSO 1951
+      // Bordo interno ovale scuro
+      ctx.strokeStyle = "#0284c7";
+      ctx.lineWidth = 10;
+      ctx.beginPath();
+      ctx.ellipse(256, 340, 210, 290, 0, 0, 2 * Math.PI);
+      ctx.stroke();
+
+      // Disegno della Torre/Rocca centrale di Caorso
       ctx.fillStyle = "#0a192f";
-      ctx.font = "bold 38px sans-serif";
+      
+      // Base della rocca
+      ctx.fillRect(206, 190, 100, 80);
+      
+      // Tre Torrette Superiori
+      ctx.fillRect(196, 150, 30, 50);
+      ctx.fillRect(241, 140, 30, 60);
+      ctx.fillRect(286, 150, 30, 50);
+
+      // Dettagli Merli
+      ctx.fillRect(190, 140, 12, 15);
+      ctx.fillRect(218, 140, 12, 15);
+      ctx.fillRect(235, 130, 12, 15);
+      ctx.fillRect(265, 130, 12, 15);
+      ctx.fillRect(282, 140, 12, 15);
+      ctx.fillRect(310, 140, 12, 15);
+
+      // Finestre e Portone
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(241, 220, 30, 50); // Portone
+      ctx.fillRect(220, 170, 12, 20); // Finestra SX
+      ctx.fillRect(280, 170, 12, 20); // Finestra DX
+
+      // Testi A.S.D. - CAORSO - 1951
+      ctx.fillStyle = "#0a192f";
+      ctx.font = "900 36px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("A.S.D.", 256, 320);
+      ctx.fillText("A.S.D.", 330, 310);
 
-      ctx.font = "bold 46px sans-serif";
-      ctx.fillText("CAORSO", 256, 370);
+      ctx.font = "900 52px sans-serif";
+      ctx.fillText("CAORSO", 256, 420);
 
-      ctx.font = "bold 32px sans-serif";
-      ctx.fillText("1951", 256, 420);
+      ctx.font = "bold 38px sans-serif";
+      ctx.fillText("1951", 256, 490);
 
-      // Applica la texture generata alla scena A-Frame
+      // Assegnazione texture al modello AR
       const plane = document.querySelector('#logo-plane');
       if (plane) {
         plane.setAttribute('material', 'src', canvas.toDataURL());
@@ -179,16 +216,24 @@
 
     <a-entity mindar-image-target="targetIndex: 0">
       
-      <!-- Stemma Grafico Cliccabile in Realtà Aumentata -->
+      <!-- Ombra per staccare dal foglio -->
+      <a-plane 
+        position="0 -0.05 0.05" 
+        width="1.1" 
+        height="1.4" 
+        material="color: #000000; transparent: true; opacity: 0.35">
+      </a-plane>
+
+      <!-- Stemma Ovale in Primo Piano (Stacco tridimensionale z=0.35) -->
       <a-plane 
         id="logo-plane"
         class="clickable" 
         click-redirect 
-        position="0 0 0.1" 
-        width="1.2" 
-        height="1.2" 
+        position="0 0 0.35" 
+        width="1.0" 
+        height="1.3" 
         material="transparent: true; alphaTest: 0.1"
-        animation__pulse="property: scale; to: 1.08 1.08 1.08; dir: alternate; loop: true; dur: 1200; easing: easeInOutSine">
+        animation__pulse="property: scale; to: 1.06 1.06 1.06; dir: alternate; loop: true; dur: 1400; easing: easeInOutSine">
       </a-plane>
 
     </a-entity>
