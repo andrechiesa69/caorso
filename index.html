@@ -18,7 +18,7 @@
       overflow: hidden;
     }
 
-    /* Stile pulsante grafico */
+    /* Pulsante interattivo per aprire la scheda dell'A.S.D. Caorso su Tuttocampo */
     #tuttocampo-btn {
       display: none;
       position: fixed;
@@ -47,30 +47,30 @@
 </head>
 <body>
 
-  <!-- Pulsante di reindirizzamento alla scheda dell'A.S.D. Caorso -->
+  <!-- Pulsante di reindirizzamento alla scheda ufficiale dell'A.S.D. Caorso -->
   <a id="tuttocampo-btn" href="https://www.tuttocampo.it/EmiliaRomagna/SecondaCategoria/GironeBParma/Squadra/Caorso/1000541/Scheda" target="_blank">
     ⚽ VAI ALLA SCHEDA A.S.D. CAORSO
   </a>
 
-  <!-- SCENA AR MINDAR -->
+  <!-- SCENA AR MINDAR CON RIQUADRO DI SCANSIONE (uiScanning: yes) -->
   <a-scene 
-    mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; filterMinCF: 0.0001; filterBeta: 0.001;" 
+    mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: yes; uiError: yes; uiScanning: yes;" 
     color-space="sRGB" 
     renderer="colorManagement: true, physicallyCorrectLights" 
     vr-mode-ui="enabled: false" 
     device-orientation-permission-ui="enabled: true">
     
     <a-assets>
-      <!-- Logo da sovrapporre in AR -->
+      <!-- Logo Caorso da mostrare sul target -->
       <img id="logoCaorso" src="./logo.png" crossorigin="anonymous">
     </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false" raycaster="objects: .clickable" cursor="fuse: false; rayOrigin: mouse"></a-camera>
 
-    <!-- Target AR 0 -->
+    <!-- TARGET AR -->
     <a-entity id="targetEntity" mindar-image-target="targetIndex: 0">
       
-      <!-- Logo in AR fisso e statico -->
+      <!-- Logo in AR fisso e statico (senza rotazione) -->
       <a-plane 
         class="clickable"
         src="#logoCaorso" 
