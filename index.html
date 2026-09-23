@@ -90,12 +90,18 @@
   </style>
 
   <script>
-    // Gestione reindirizzamento compatibile con i browser mobile
+    // Registrazione del componente compatibile sia con Click che Touch per Mobile
     AFRAME.registerComponent('click-redirect', {
       init: function () {
-        this.el.addEventListener('click', function () {
+        var el = this.el;
+        
+        function goToTarget() {
           window.location.href = 'https://www.tuttocampo.it';
-        });
+        }
+
+        // Gestisce sia il click (mouse/desktop) che il touch (smartphone)
+        el.addEventListener('click', goToTarget);
+        el.addEventListener('touchstart', goToTarget);
       }
     });
   </script>
@@ -130,7 +136,7 @@
         position="0 0 0.1"
         animation__rotate="property: rotation; to: 0 360 0; loop: true; dur: 7000; easing: linear">
 
-        <!-- Cilindro Principale (Cliccabile) -->
+        <!-- Cilindro Principale (Cliccabile/Touch) -->
         <a-cylinder 
           class="clickable"
           click-redirect
@@ -141,7 +147,7 @@
           material="color: #0284c7; metalness: 0.6; roughness: 0.2">
         </a-cylinder>
 
-        <!-- Anello Dorato (Cliccabile) -->
+        <!-- Anello Dorato (Cliccabile/Touch) -->
         <a-torus 
           class="clickable"
           click-redirect
