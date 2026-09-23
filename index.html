@@ -2,242 +2,108 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>A.S.D. Caorso 1951 - WebAR</title>
-  
-  <!-- A-Frame e MindAR -->
-  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A.S.D. Caorso - WebAR Experience</title>
+
+  <!-- Librerie A-Frame e MindAR -->
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
 
   <style>
-    html, body {
+    body, html {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: transparent !important;
     }
 
-    video {
-      position: absolute !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
-      object-fit: cover !important;
-      z-index: -2 !important;
-    }
-
-    a-scene {
-      width: 100% !important;
-      height: 100% !important;
-      position: absolute !important;
-      top: 0 !important;
-      left: 0 !important;
-    }
-
-    /* Intestazione */
-    #header {
-      position: fixed;
-      top: 15px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(10, 25, 47, 0.85);
-      border: 1px solid #1e3a8a;
-      padding: 10px 20px;
-      border-radius: 20px;
-      text-align: center;
-      color: white;
-      z-index: 999;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-      pointer-events: none;
-    }
-
-    #header h1 {
-      margin: 0;
-      font-size: 16px;
-      color: #38bdf8;
-      letter-spacing: 1px;
-    }
-
-    #header p {
-      margin: 3px 0 0 0;
-      font-size: 11px;
-      color: #cbd5e1;
-    }
-
-    /* Pulsante diretto in basso */
-    #tuttocampo-btn {
-      position: fixed;
-      bottom: 25px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #0284c7;
-      color: white;
-      text-decoration: none;
-      padding: 12px 24px;
-      border-radius: 25px;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      font-weight: bold;
-      font-size: 14px;
-      z-index: 999;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-      display: block;
-      cursor: pointer;
+    /* Stile per l'anteprima dell'SVG target se si apre la pagina da browser desktop */
+    #svg-target-preview {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 9999;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      max-width: 120px;
     }
   </style>
-
-  <script>
-    function openLink() {
-      window.location.href = 'https://www.tuttocampo.it/EmiliaRomagna/SecondaCategoria/GironeBParma/Squadra/Caorso/1000541/Scheda';
-    }
-
-    AFRAME.registerComponent('click-redirect', {
-      init: function () {
-        var el = this.el;
-        el.addEventListener('click', openLink);
-        el.addEventListener('mousedown', openLink);
-        el.addEventListener('touchstart', openLink);
-      }
-    });
-  </script>
 </head>
 <body>
 
-  <div id="header">
-    <h1>A.S.D. CAORSO 1951</h1>
-    <p>Inquadra il logo e tocca lo stemma per aprire Tuttocampo</p>
+  <!-- ANTEPRIMA SVG TARGET (Visualizzabile a schermo) -->
+  <div id="svg-target-preview">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+      <defs>
+        <!-- Pattern a scacchi ad alto contrasto per i Feature Points di MindAR -->
+        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+          <rect width="10" height="10" fill="#002b66"/>
+          <rect x="10" width="10" height="10" fill="#d00000"/>
+          <rect y="10" width="10" height="10" fill="#ffffff"/>
+          <rect x="10" y="10" width="10" height="10" fill="#111111"/>
+        </pattern>
+      </defs>
+
+      <!-- Sfondo con Pattern -->
+      <rect width="500" height="500" fill="url(#grid)" />
+      
+      <!-- Cornice ad alto contrasto -->
+      <rect x="15" y="15" width="470" height="470" fill="none" stroke="#ffffff" stroke-width="8" />
+      <rect x="25" y="25" width="450" height="450" fill="none" stroke="#d00000" stroke-width="6" stroke-dasharray="12,6" />
+
+      <!-- Cerchio Centrale Logo -->
+      <circle cx="250" cy="250" r="160" fill="#ffffff" stroke="#002b66" stroke-width="10" />
+
+      <!-- Scritta ASD CAORSO -->
+      <path id="textArc" d="M 120,250 A 130,130 0 0,1 380,250" fill="none" />
+      <text font-family="Arial, sans-serif" font-size="28" font-weight="900" fill="#002b66" text-anchor="middle">
+        <textPath href="#textArc" startOffset="50%">A.S.D. CAORSO</textPath>
+      </text>
+
+      <!-- Dettaglio Portiere / Pallone -->
+      <circle cx="250" cy="240" r="35" fill="#111111" stroke="#ffffff" stroke-width="3" />
+      <polygon points="250,210 262,222 258,238 242,238 238,222" fill="#ffffff" />
+      <path d="M 180,310 L 220,270 L 250,285 L 280,270 L 320,310 Z" fill="#d00000" stroke="#002b66" stroke-width="4" />
+
+      <!-- Marcatori angolari per aggancio camera -->
+      <polygon points="30,30 70,30 30,70" fill="#ffffff" />
+      <polygon points="470,30 430,30 470,70" fill="#ffffff" />
+      <polygon points="30,470 70,470 30,430" fill="#ffffff" />
+      <polygon points="470,470 430,470 470,430" fill="#ffffff" />
+    </svg>
   </div>
 
-  <a id="tuttocampo-btn" href="https://www.tuttocampo.it/EmiliaRomagna/SecondaCategoria/GironeBParma/Squadra/Caorso/1000541/Scheda">
-    Vai direttamente a Tuttocampo.it
-  </a>
-
-  <!-- Canvas di rendering per lo stemma ufficiale dell'A.S.D. Caorso -->
-  <canvas id="logo-canvas" width="512" height="680" style="display:none;"></canvas>
-
-  <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      const canvas = document.getElementById('logo-canvas');
-      const ctx = canvas.getContext('2d');
-
-      // Bordo e Sfondo Ovale Principale
-      ctx.fillStyle = "#0284c7";
-      ctx.beginPath();
-      ctx.ellipse(256, 340, 230, 310, 0, 0, 2 * Math.PI);
-      ctx.fill();
-
-      ctx.fillStyle = "#ffffff";
-      ctx.beginPath();
-      ctx.ellipse(256, 340, 220, 300, 0, 0, 2 * Math.PI);
-      ctx.fill();
-
-      // Parte Sinistra Azzurra dello Stemma
-      ctx.fillStyle = "#0284c7";
-      ctx.beginPath();
-      ctx.ellipse(256, 340, 210, 290, 0, 0, 2 * Math.PI);
-      ctx.fill();
-
-      // Diagonale Bianca per la metà destra
-      ctx.fillStyle = "#ffffff";
-      ctx.beginPath();
-      ctx.moveTo(100, 600);
-      ctx.lineTo(466, 120);
-      ctx.lineTo(466, 630);
-      ctx.lineTo(100, 630);
-      ctx.closePath();
-      ctx.fill();
-
-      // Bordo interno ovale scuro
-      ctx.strokeStyle = "#0284c7";
-      ctx.lineWidth = 10;
-      ctx.beginPath();
-      ctx.ellipse(256, 340, 210, 290, 0, 0, 2 * Math.PI);
-      ctx.stroke();
-
-      // Disegno della Torre/Rocca centrale di Caorso
-      ctx.fillStyle = "#0a192f";
-      
-      // Base della rocca
-      ctx.fillRect(206, 190, 100, 80);
-      
-      // Tre Torrette Superiori
-      ctx.fillRect(196, 150, 30, 50);
-      ctx.fillRect(241, 140, 30, 60);
-      ctx.fillRect(286, 150, 30, 50);
-
-      // Dettagli Merli
-      ctx.fillRect(190, 140, 12, 15);
-      ctx.fillRect(218, 140, 12, 15);
-      ctx.fillRect(235, 130, 12, 15);
-      ctx.fillRect(265, 130, 12, 15);
-      ctx.fillRect(282, 140, 12, 15);
-      ctx.fillRect(310, 140, 12, 15);
-
-      // Finestre e Portone
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(241, 220, 30, 50); // Portone
-      ctx.fillRect(220, 170, 12, 20); // Finestra SX
-      ctx.fillRect(280, 170, 12, 20); // Finestra DX
-
-      // Testi A.S.D. - CAORSO - 1951
-      ctx.fillStyle = "#0a192f";
-      ctx.font = "900 36px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("A.S.D.", 330, 310);
-
-      ctx.font = "900 52px sans-serif";
-      ctx.fillText("CAORSO", 256, 420);
-
-      ctx.font = "bold 38px sans-serif";
-      ctx.fillText("1951", 256, 490);
-
-      // Assegnazione texture al modello AR
-      const plane = document.querySelector('#logo-plane');
-      if (plane) {
-        plane.setAttribute('material', 'src', canvas.toDataURL());
-      }
-    });
-  </script>
-
+  <!-- SCENA AR CON MINDAR -->
   <a-scene 
-    mindar-image="imageTargetSrc: ./target.mind;" 
-    embedded
+    mindar-image="imageTargetSrc: ./targets.mind;" 
     color-space="sRGB" 
-    renderer="colorManagement: true, physicallyCorrectLights, alpha: true" 
+    renderer="colorManagement: true, physicallyCorrectLights" 
     vr-mode-ui="enabled: false" 
-    device-orientation-permission-ui="enabled: false"
-    cursor="rayOrigin: mouse; fuse: false"
-    raycaster="objects: .clickable; interval: 100">
+    device-orientation-permission-ui="enabled: false">
+    
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-    <a-camera position="0 0 0" look-controls="enabled: false" raycaster="objects: .clickable; far: 10000; near: 0"></a-camera>
-
+    <!-- Oggetti 3D associati al target -->
     <a-entity mindar-image-target="targetIndex: 0">
+      <!-- Cubo Rosso che ruota -->
+      <a-box 
+        position="0 0.2 0" 
+        rotation="0 45 0" 
+        scale="0.4 0.4 0.4"
+        material="color: #d00000;" 
+        animation="property: rotation; to: 0 405 0; dur: 4000; easing: linear; loop: true">
+      </a-box>
       
-      <!-- Ombra per staccare dal foglio -->
-      <a-plane 
-        position="0 -0.05 0.05" 
-        width="1.1" 
-        height="1.4" 
-        material="color: #000000; transparent: true; opacity: 0.35">
-      </a-plane>
-
-      <!-- Stemma Ovale in Primo Piano (Stacco tridimensionale z=0.35) -->
-      <a-plane 
-        id="logo-plane"
-        class="clickable" 
-        click-redirect 
-        position="0 0 0.35" 
-        width="1.0" 
-        height="1.3" 
-        material="transparent: true; alphaTest: 0.1"
-        animation__pulse="property: scale; to: 1.06 1.06 1.06; dir: alternate; loop: true; dur: 1400; easing: easeInOutSine">
-      </a-plane>
-
+      <!-- Sfera Blu -->
+      <a-sphere 
+        position="0 0.7 0" 
+        radius="0.15" 
+        material="color: #002b66;">
+      </a-sphere>
     </a-entity>
-
   </a-scene>
 
 </body>
