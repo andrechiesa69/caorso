@@ -19,7 +19,6 @@
       background: transparent !important;
     }
 
-    /* Regolazione z-index per forzare il video della fotocamera visibile su iOS */
     video {
       position: absolute !important;
       top: 0 !important;
@@ -38,7 +37,7 @@
       left: 0 !important;
     }
 
-    /* Intestazione */
+    /* Header Intestazione */
     #header {
       position: fixed;
       top: 15px;
@@ -68,7 +67,7 @@
       color: #cbd5e1;
     }
 
-    /* Pulsante Tuttocampo */
+    /* Pulsante diretto in basso */
     #tuttocampo-btn {
       position: fixed;
       bottom: 25px;
@@ -86,34 +85,52 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     }
   </style>
+
+  <script>
+    AFRAME.registerComponent('click-redirect', {
+      init: function () {
+        this.el.addEventListener('click', function () {
+          window.location.href = 'https://www.tuttocampo.it';
+        });
+      }
+    });
+  </script>
 </head>
 <body>
 
-  <!-- Interfaccia Sovrapposta -->
   <div id="header">
     <h1>A.S.D. CAORSO 1951</h1>
-    <p>Realtà Aumentata Ufficiale</p>
+    <p>Inquadra il logo e tocca lo scudo 3D</p>
   </div>
 
   <a id="tuttocampo-btn" href="https://www.tuttocampo.it" target="_blank">
     Vai direttamente a Tuttocampo.it
   </a>
 
-  <!-- Scena AR con supporto iOS -->
   <a-scene 
     mindar-image="imageTargetSrc: ./target.mind;" 
     embedded
     color-space="sRGB" 
     renderer="colorManagement: true, physicallyCorrectLights, alpha: true" 
     vr-mode-ui="enabled: false" 
-    device-orientation-permission-ui="enabled: false">
+    device-orientation-permission-ui="enabled: false"
+    cursor="rayOrigin: mouse"
+    raycaster="objects: .clickable">
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
     <a-entity mindar-image-target="targetIndex: 0">
-      <!-- Scudo 3D animato -->
-      <a-cylinder position="0 0 0" rotation="90 0 0" radius="0.6" height="0.05" material="color: #0284c7;" animation="property: rotation; to: 90 360 0; loop: true; dur: 8000; easing: linear">
-        <a-ring color="#38bdf8" radius-inner="0.62" radius-outer="0.65" position="0 0 0"></a-ring>
+      <!-- Scudo 3D Cliccabile -->
+      <a-cylinder 
+        class="clickable"
+        click-redirect
+        position="0 0 0.1" 
+        rotation="90 0 0" 
+        radius="0.6" 
+        height="0.08" 
+        material="color: #0284c7;" 
+        animation="property: rotation; to: 90 360 0; loop: true; dur: 6000; easing: linear">
+        <a-ring color="#38bdf8" radius-inner="0.61" radius-outer="0.66" position="0 0 0"></a-ring>
       </a-cylinder>
     </a-entity>
 
