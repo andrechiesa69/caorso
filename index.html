@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>A.S.D. Caorso - WebAR Experience</title>
 
   <!-- Librerie A-Frame e MindAR -->
@@ -16,9 +16,10 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
+      background-color: #000;
     }
 
-    /* Pulsante interattivo per aprire la scheda dell'A.S.D. Caorso su Tuttocampo */
+    /* Pulsante interattivo Tuttocampo */
     #tuttocampo-btn {
       display: none;
       position: fixed;
@@ -47,21 +48,21 @@
 </head>
 <body>
 
-  <!-- Pulsante di reindirizzamento alla scheda ufficiale dell'A.S.D. Caorso -->
+  <!-- Pulsante di reindirizzamento alla scheda dell'A.S.D. Caorso -->
   <a id="tuttocampo-btn" href="https://www.tuttocampo.it/EmiliaRomagna/SecondaCategoria/GironeBParma/Squadra/Caorso/1000541/Scheda" target="_blank">
     ⚽ VAI ALLA SCHEDA A.S.D. CAORSO
   </a>
 
-  <!-- SCENA AR MINDAR CON RIQUADRO DI SCANSIONE (uiScanning: yes) -->
+  <!-- SCENA AR MINDAR (Ottimizzata per Safari / iOS) -->
   <a-scene 
-    mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: yes; uiError: yes; uiScanning: yes;" 
+    mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: no; uiError: yes; uiScanning: yes;" 
     color-space="sRGB" 
     renderer="colorManagement: true, physicallyCorrectLights" 
     vr-mode-ui="enabled: false" 
     device-orientation-permission-ui="enabled: true">
     
     <a-assets>
-      <!-- Logo Caorso da mostrare sul target -->
+      <!-- Logo da mostrare sul target -->
       <img id="logoCaorso" src="./logo.png" crossorigin="anonymous">
     </a-assets>
 
@@ -70,7 +71,7 @@
     <!-- TARGET AR -->
     <a-entity id="targetEntity" mindar-image-target="targetIndex: 0">
       
-      <!-- Logo in AR fisso e statico (senza rotazione) -->
+      <!-- Logo in AR fisso e statico -->
       <a-plane 
         class="clickable"
         src="#logoCaorso" 
