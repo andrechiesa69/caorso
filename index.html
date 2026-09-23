@@ -90,18 +90,16 @@
   </style>
 
   <script>
-    // Registrazione del componente compatibile sia con Click che Touch per Mobile
+    function openLink() {
+      window.location.href = 'https://www.tuttocampo.it';
+    }
+
     AFRAME.registerComponent('click-redirect', {
       init: function () {
         var el = this.el;
-        
-        function goToTarget() {
-          window.location.href = 'https://www.tuttocampo.it';
-        }
-
-        // Gestisce sia il click (mouse/desktop) che il touch (smartphone)
-        el.addEventListener('click', goToTarget);
-        el.addEventListener('touchstart', goToTarget);
+        el.addEventListener('click', openLink);
+        el.addEventListener('mousedown', openLink);
+        el.addEventListener('touchstart', openLink);
       }
     });
   </script>
@@ -113,7 +111,7 @@
     <p>Inquadra il logo e tocca lo stemma 3D</p>
   </div>
 
-  <a id="tuttocampo-btn" href="https://www.tuttocampo.it" target="_blank">
+  <a id="tuttocampo-btn" href="https://www.tuttocampo.it">
     Vai direttamente a Tuttocampo.it
   </a>
 
@@ -125,18 +123,28 @@
     vr-mode-ui="enabled: false" 
     device-orientation-permission-ui="enabled: false"
     cursor="rayOrigin: mouse; fuse: false"
-    raycaster="objects: .clickable">
+    raycaster="objects: .clickable; interval: 100">
 
-    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+    <a-camera position="0 0 0" look-controls="enabled: false" raycaster="objects: .clickable; far: 10000; near: 0"></a-camera>
 
     <a-entity mindar-image-target="targetIndex: 0">
       
-      <!-- Gruppo Stemma 3D -->
+      <!-- Area Invisibile di Tocco Ingrandita (Piano 2D frontale) -->
+      <a-plane 
+        class="clickable" 
+        click-redirect 
+        position="0 0 0.2" 
+        width="1.8" 
+        height="1.8" 
+        material="transparent: true; opacity: 0.001">
+      </a-plane>
+
+      <!-- Gruppo Stemma 3D Visivo -->
       <a-entity 
         position="0 0 0.1"
         animation__rotate="property: rotation; to: 0 360 0; loop: true; dur: 7000; easing: linear">
 
-        <!-- Cilindro Principale (Cliccabile/Touch) -->
+        <!-- Cilindro Principale -->
         <a-cylinder 
           class="clickable"
           click-redirect
@@ -147,7 +155,7 @@
           material="color: #0284c7; metalness: 0.6; roughness: 0.2">
         </a-cylinder>
 
-        <!-- Anello Dorato (Cliccabile/Touch) -->
+        <!-- Anello Dorato -->
         <a-torus 
           class="clickable"
           click-redirect
