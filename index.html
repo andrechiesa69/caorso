@@ -18,14 +18,14 @@
       overflow: hidden;
     }
 
-    /* Pulsante interattivo per aprire la scheda dell'A.S.D. Caorso su Tuttocampo */
+    /* Stile pulsante grafico */
     #tuttocampo-btn {
       display: none;
-      position: absolute;
-      bottom: 30px;
+      position: fixed;
+      bottom: 40px;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 9999;
+      z-index: 10000;
       background-color: #002b66;
       color: #ffffff;
       padding: 14px 28px;
@@ -34,7 +34,7 @@
       font-weight: bold;
       border: 2px solid #ffffff;
       border-radius: 30px;
-      box-shadow: 0px 4px 12px rgba(0,0,0,0.4);
+      box-shadow: 0px 4px 15px rgba(0,0,0,0.5);
       cursor: pointer;
       text-decoration: none;
       text-align: center;
@@ -47,30 +47,30 @@
 </head>
 <body>
 
-  <!-- Pulsante di reindirizzamento alla scheda ufficiale dell'A.S.D. Caorso -->
+  <!-- Pulsante di reindirizzamento alla scheda dell'A.S.D. Caorso -->
   <a id="tuttocampo-btn" href="https://www.tuttocampo.it/EmiliaRomagna/SecondaCategoria/GironeBParma/Squadra/Caorso/1000541/Scheda" target="_blank">
     ⚽ VAI ALLA SCHEDA A.S.D. CAORSO
   </a>
 
   <!-- SCENA AR MINDAR -->
   <a-scene 
-    mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: yes; uiError: yes; uiScanning: yes;" 
+    mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; filterMinCF: 0.0001; filterBeta: 0.001;" 
     color-space="sRGB" 
     renderer="colorManagement: true, physicallyCorrectLights" 
     vr-mode-ui="enabled: false" 
     device-orientation-permission-ui="enabled: true">
     
     <a-assets>
-      <!-- Logo Caorso per l'elemento AR -->
-      <img id="logoCaorso" src="https://andrechiesa69.github.io/caorso/logo.png" crossorigin="anonymous">
+      <!-- Logo da sovrapporre in AR -->
+      <img id="logoCaorso" src="./logo.png" crossorigin="anonymous">
     </a-assets>
 
     <a-camera position="0 0 0" look-controls="enabled: false" raycaster="objects: .clickable" cursor="fuse: false; rayOrigin: mouse"></a-camera>
 
-    <!-- TARGET AR -->
+    <!-- Target AR 0 -->
     <a-entity id="targetEntity" mindar-image-target="targetIndex: 0">
       
-      <!-- Logo in AR fisso (statico, senza rotazione) -->
+      <!-- Logo in AR fisso e statico -->
       <a-plane 
         class="clickable"
         src="#logoCaorso" 
@@ -90,17 +90,17 @@
     const arPlane = document.querySelector('.clickable');
     const caorsoUrl = 'https://www.tuttocampo.it/EmiliaRomagna/SecondaCategoria/GironeBParma/Squadra/Caorso/1000541/Scheda';
 
-    // Quando la fotocamera aggancia il target
+    // Riconoscimento del target
     targetEntity.addEventListener("targetFound", () => {
       tuttocampoBtn.style.display = "block";
     });
 
-    // Quando si perde il target
+    // Perdita del target
     targetEntity.addEventListener("targetLost", () => {
       tuttocampoBtn.style.display = "none";
     });
 
-    // Cliccando sul logo 3D/2D in AR si apre direttamente la pagina dell'A.S.D. Caorso
+    // Clic sul logo AR
     arPlane.addEventListener('click', function () {
       window.open(caorsoUrl, '_blank');
     });
