@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>A.S.D. Caorso - WebAR Experience</title>
 
   <!-- Librerie A-Frame e MindAR -->
@@ -18,93 +18,93 @@
       overflow: hidden;
     }
 
-    /* Stile per l'anteprima dell'SVG target se si apre la pagina da browser desktop */
-    #svg-target-preview {
+    /* Pulsante interattivo per aprire la scheda dell'A.S.D. Caorso su Tuttocampo */
+    #tuttocampo-btn {
+      display: none;
       position: absolute;
-      top: 10px;
-      left: 10px;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
       z-index: 9999;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 8px;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      max-width: 120px;
+      background-color: #002b66;
+      color: #ffffff;
+      padding: 14px 28px;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      font-weight: bold;
+      border: 2px solid #ffffff;
+      border-radius: 30px;
+      box-shadow: 0px 4px 12px rgba(0,0,0,0.4);
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+    }
+
+    #tuttocampo-btn:active {
+      background-color: #d00000;
     }
   </style>
 </head>
 <body>
 
-  <!-- ANTEPRIMA SVG TARGET (Visualizzabile a schermo) -->
-  <div id="svg-target-preview">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
-      <defs>
-        <!-- Pattern a scacchi ad alto contrasto per i Feature Points di MindAR -->
-        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-          <rect width="10" height="10" fill="#002b66"/>
-          <rect x="10" width="10" height="10" fill="#d00000"/>
-          <rect y="10" width="10" height="10" fill="#ffffff"/>
-          <rect x="10" y="10" width="10" height="10" fill="#111111"/>
-        </pattern>
-      </defs>
+  <!-- Pulsante di reindirizzamento alla scheda ufficiale dell'A.S.D. Caorso -->
+  <a id="tuttocampo-btn" href="https://www.tuttocampo.it/EmiliaRomagna/SecondaCategoria/GironeBParma/Squadra/Caorso/1000541/Scheda" target="_blank">
+    ⚽ VAI ALLA SCHEDA A.S.D. CAORSO
+  </a>
 
-      <!-- Sfondo con Pattern -->
-      <rect width="500" height="500" fill="url(#grid)" />
-      
-      <!-- Cornice ad alto contrasto -->
-      <rect x="15" y="15" width="470" height="470" fill="none" stroke="#ffffff" stroke-width="8" />
-      <rect x="25" y="25" width="450" height="450" fill="none" stroke="#d00000" stroke-width="6" stroke-dasharray="12,6" />
-
-      <!-- Cerchio Centrale Logo -->
-      <circle cx="250" cy="250" r="160" fill="#ffffff" stroke="#002b66" stroke-width="10" />
-
-      <!-- Scritta ASD CAORSO -->
-      <path id="textArc" d="M 120,250 A 130,130 0 0,1 380,250" fill="none" />
-      <text font-family="Arial, sans-serif" font-size="28" font-weight="900" fill="#002b66" text-anchor="middle">
-        <textPath href="#textArc" startOffset="50%">A.S.D. CAORSO</textPath>
-      </text>
-
-      <!-- Dettaglio Portiere / Pallone -->
-      <circle cx="250" cy="240" r="35" fill="#111111" stroke="#ffffff" stroke-width="3" />
-      <polygon points="250,210 262,222 258,238 242,238 238,222" fill="#ffffff" />
-      <path d="M 180,310 L 220,270 L 250,285 L 280,270 L 320,310 Z" fill="#d00000" stroke="#002b66" stroke-width="4" />
-
-      <!-- Marcatori angolari per aggancio camera -->
-      <polygon points="30,30 70,30 30,70" fill="#ffffff" />
-      <polygon points="470,30 430,30 470,70" fill="#ffffff" />
-      <polygon points="30,470 70,470 30,430" fill="#ffffff" />
-      <polygon points="470,470 430,470 470,430" fill="#ffffff" />
-    </svg>
-  </div>
-
-  <!-- SCENA AR CON MINDAR -->
+  <!-- SCENA AR MINDAR -->
   <a-scene 
-    mindar-image="imageTargetSrc: ./targets.mind;" 
+    mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: yes; uiError: yes; uiScanning: yes;" 
     color-space="sRGB" 
     renderer="colorManagement: true, physicallyCorrectLights" 
     vr-mode-ui="enabled: false" 
-    device-orientation-permission-ui="enabled: false">
+    device-orientation-permission-ui="enabled: true">
     
-    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+    <a-assets>
+      <!-- Logo Caorso per l'elemento AR -->
+      <img id="logoCaorso" src="https://andrechiesa69.github.io/caorso/logo.png" crossorigin="anonymous">
+    </a-assets>
 
-    <!-- Oggetti 3D associati al target -->
-    <a-entity mindar-image-target="targetIndex: 0">
-      <!-- Cubo Rosso che ruota -->
-      <a-box 
-        position="0 0.2 0" 
-        rotation="0 45 0" 
-        scale="0.4 0.4 0.4"
-        material="color: #d00000;" 
-        animation="property: rotation; to: 0 405 0; dur: 4000; easing: linear; loop: true">
-      </a-box>
+    <a-camera position="0 0 0" look-controls="enabled: false" raycaster="objects: .clickable" cursor="fuse: false; rayOrigin: mouse"></a-camera>
+
+    <!-- TARGET AR -->
+    <a-entity id="targetEntity" mindar-image-target="targetIndex: 0">
       
-      <!-- Sfera Blu -->
-      <a-sphere 
-        position="0 0.7 0" 
-        radius="0.15" 
-        material="color: #002b66;">
-      </a-sphere>
+      <!-- Logo in AR fisso (statico, senza rotazione) -->
+      <a-plane 
+        class="clickable"
+        src="#logoCaorso" 
+        position="0 0 0" 
+        height="1" 
+        width="1" 
+        rotation="0 0 0"
+        material="transparent: true; alphaTest: 0.5;">
+      </a-plane>
+
     </a-entity>
   </a-scene>
+
+  <script>
+    const targetEntity = document.querySelector('#targetEntity');
+    const tuttocampoBtn = document.querySelector('#tuttocampo-btn');
+    const arPlane = document.querySelector('.clickable');
+    const caorsoUrl = 'https://www.tuttocampo.it/EmiliaRomagna/SecondaCategoria/GironeBParma/Squadra/Caorso/1000541/Scheda';
+
+    // Quando la fotocamera aggancia il target
+    targetEntity.addEventListener("targetFound", () => {
+      tuttocampoBtn.style.display = "block";
+    });
+
+    // Quando si perde il target
+    targetEntity.addEventListener("targetLost", () => {
+      tuttocampoBtn.style.display = "none";
+    });
+
+    // Cliccando sul logo 3D/2D in AR si apre direttamente la pagina dell'A.S.D. Caorso
+    arPlane.addEventListener('click', function () {
+      window.open(caorsoUrl, '_blank');
+    });
+  </script>
 
 </body>
 </html>
