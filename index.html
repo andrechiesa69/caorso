@@ -16,25 +16,12 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: transparent !important;
+      background-color: transparent !important;
     }
 
-    video {
-      position: absolute !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
-      object-fit: cover !important;
-      z-index: -2 !important;
-    }
-
-    a-scene {
-      width: 100% !important;
-      height: 100% !important;
-      position: absolute !important;
-      top: 0 !important;
-      left: 0 !important;
+    /* Assicura che il video della fotocamera generato da MindAR sia visibile */
+    .mindar-ui-overlay {
+      z-index: 2;
     }
 
     /* Intestazione */
@@ -98,7 +85,6 @@
       init: function () {
         var el = this.el;
         el.addEventListener('click', openLink);
-        el.addEventListener('mousedown', openLink);
         el.addEventListener('touchstart', openLink);
       }
     });
@@ -214,18 +200,20 @@
     });
   </script>
 
-  <!-- Attributo imageTargetSrc impostato su ./targets.mind -->
+  <!-- 
+    Disabilitato device-orientation-permission-ui per evitare il popup su iOS.
+    Disabilitato vr-mode-ui.
+  -->
   <a-scene 
     mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiScanning: yes;" 
-    embedded
     color-space="sRGB" 
     renderer="colorManagement: true, physicallyCorrectLights, alpha: true" 
     vr-mode-ui="enabled: false" 
-    device-orientation-permission-ui="enabled: true"
+    device-orientation-permission-ui="enabled: false"
     cursor="rayOrigin: mouse; fuse: false"
     raycaster="objects: .clickable; interval: 100">
 
-    <a-camera position="0 0 0" look-controls="enabled: false" raycaster="objects: .clickable; far: 10000; near: 0"></a-camera>
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
     <a-entity mindar-image-target="targetIndex: 0">
       
@@ -237,7 +225,7 @@
         material="color: #000000; transparent: true; opacity: 0.35">
       </a-plane>
 
-      <!-- Stemma Ovale in Primo Piano (Stacco tridimensionale z=0.35) -->
+      <!-- Stemma Ovale in Primo Piano -->
       <a-plane 
         id="logo-plane"
         class="clickable" 
