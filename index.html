@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>A.S.D. Caorso 1951 - WebAR</title>
   
-  <!-- A-Frame e MindAR -->
+  <!-- Librerie A-Frame e MindAR -->
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
@@ -19,12 +19,11 @@
       background-color: transparent !important;
     }
 
-    /* Assicura che il video della fotocamera generato da MindAR sia visibile */
     .mindar-ui-overlay {
       z-index: 2;
     }
 
-    /* Intestazione */
+    /* Intestazione in alto */
     #header {
       position: fixed;
       top: 15px;
@@ -77,10 +76,12 @@
   </style>
 
   <script>
+    // Funzione di reindirizzamento al sito Tuttocampo
     function openLink() {
       window.location.href = 'https://www.tuttocampo.it/EmiliaRomagna/SecondaCategoria/GironeBParma/Squadra/Caorso/1000541/Scheda';
     }
 
+    // Registrazione del componente click per gli elementi 3D
     AFRAME.registerComponent('click-redirect', {
       init: function () {
         var el = this.el;
@@ -92,118 +93,17 @@
 </head>
 <body>
 
+  <!-- Overlay grafico per l'utente -->
   <div id="header">
     <h1>A.S.D. CAORSO 1951</h1>
-    <p>Inquadra il logo e tocca lo stemma per aprire Tuttocampo</p>
+    <p>Inquadra il logo e tocca la scheda per aprire Tuttocampo</p>
   </div>
 
   <a id="tuttocampo-btn" href="https://www.tuttocampo.it/EmiliaRomagna/SecondaCategoria/GironeBParma/Squadra/Caorso/1000541/Scheda">
     Vai direttamente a Tuttocampo.it
   </a>
 
-  <!-- Canvas di rendering per lo stemma ufficiale dell'A.S.D. Caorso -->
-  <canvas id="logo-canvas" width="512" height="680" style="display:none;"></canvas>
-
-  <script>
-    function generateLogoTexture() {
-      const canvas = document.getElementById('logo-canvas');
-      const ctx = canvas.getContext('2d');
-
-      // Bordo e Sfondo Ovale Principale
-      ctx.fillStyle = "#0284c7";
-      ctx.beginPath();
-      ctx.ellipse(256, 340, 230, 310, 0, 0, 2 * Math.PI);
-      ctx.fill();
-
-      ctx.fillStyle = "#ffffff";
-      ctx.beginPath();
-      ctx.ellipse(256, 340, 220, 300, 0, 0, 2 * Math.PI);
-      ctx.fill();
-
-      // Parte Sinistra Azzurra dello Stemma
-      ctx.fillStyle = "#0284c7";
-      ctx.beginPath();
-      ctx.ellipse(256, 340, 210, 290, 0, 0, 2 * Math.PI);
-      ctx.fill();
-
-      // Diagonale Bianca per la metà destra
-      ctx.fillStyle = "#ffffff";
-      ctx.beginPath();
-      ctx.moveTo(100, 600);
-      ctx.lineTo(466, 120);
-      ctx.lineTo(466, 630);
-      ctx.lineTo(100, 630);
-      ctx.closePath();
-      ctx.fill();
-
-      // Bordo interno ovale scuro
-      ctx.strokeStyle = "#0284c7";
-      ctx.lineWidth = 10;
-      ctx.beginPath();
-      ctx.ellipse(256, 340, 210, 290, 0, 0, 2 * Math.PI);
-      ctx.stroke();
-
-      // Disegno della Torre/Rocca centrale di Caorso
-      ctx.fillStyle = "#0a192f";
-      
-      // Base della rocca
-      ctx.fillRect(206, 190, 100, 80);
-      
-      // Tre Torrette Superiori
-      ctx.fillRect(196, 150, 30, 50);
-      ctx.fillRect(241, 140, 30, 60);
-      ctx.fillRect(286, 150, 30, 50);
-
-      // Dettagli Merli
-      ctx.fillRect(190, 140, 12, 15);
-      ctx.fillRect(218, 140, 12, 15);
-      ctx.fillRect(235, 130, 12, 15);
-      ctx.fillRect(265, 130, 12, 15);
-      ctx.fillRect(282, 140, 12, 15);
-      ctx.fillRect(310, 140, 12, 15);
-
-      // Finestre e Portone
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(241, 220, 30, 50); // Portone
-      ctx.fillRect(220, 170, 12, 20); // Finestra SX
-      ctx.fillRect(280, 170, 12, 20); // Finestra DX
-
-      // Testi A.S.D. - CAORSO - 1951
-      ctx.fillStyle = "#0a192f";
-      ctx.font = "900 36px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("A.S.D.", 330, 310);
-
-      ctx.font = "900 52px sans-serif";
-      ctx.fillText("CAORSO", 256, 420);
-
-      ctx.font = "bold 38px sans-serif";
-      ctx.fillText("1951", 256, 490);
-
-      return canvas.toDataURL();
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const sceneEl = document.querySelector('a-scene');
-      const applyTexture = () => {
-        const plane = document.querySelector('#logo-plane');
-        if (plane) {
-          plane.setAttribute('material', 'src', generateLogoTexture());
-        }
-      };
-
-      if (sceneEl.hasLoaded) {
-        applyTexture();
-      } else {
-        sceneEl.addEventListener('loaded', applyTexture);
-      }
-    });
-  </script>
-
-  <!-- 
-    Disabilitato device-orientation-permission-ui per evitare il popup su iOS.
-    Disabilitato vr-mode-ui.
-  -->
+  <!-- Scena AR -->
   <a-scene 
     mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiScanning: yes;" 
     color-space="sRGB" 
@@ -215,26 +115,45 @@
 
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
+    <!-- Target AR (Index 0) -->
     <a-entity mindar-image-target="targetIndex: 0">
       
-      <!-- Ombra per staccare dal foglio -->
+      <!-- Scheda AR Azzurra con Testo e Pulsante (Altissima visibilità) -->
       <a-plane 
-        position="0 -0.05 0.05" 
-        width="1.1" 
-        height="1.4" 
-        material="color: #000000; transparent: true; opacity: 0.35">
-      </a-plane>
+        class="clickable"
+        click-redirect
+        position="0 0 0.1" 
+        width="1.2" 
+        height="0.8" 
+        material="color: #0284c7; opacity: 0.95;"
+        animation__pulse="property: scale; to: 1.05 1.05 1.05; dir: alternate; loop: true; dur: 1200; easing: easeInOutSine">
+        
+        <!-- Titolo Squadra -->
+        <a-text 
+          value="A.S.D. CAORSO 1951" 
+          align="center" 
+          position="0 0.2 0.05" 
+          scale="0.6 0.6 0.6" 
+          color="#FFFFFF" 
+          font="kelsonsans">
+        </a-text>
 
-      <!-- Stemma Ovale in Primo Piano -->
-      <a-plane 
-        id="logo-plane"
-        class="clickable" 
-        click-redirect 
-        position="0 0 0.35" 
-        width="1.0" 
-        height="1.3" 
-        material="transparent: true; alphaTest: 0.1"
-        animation__pulse="property: scale; to: 1.06 1.06 1.06; dir: alternate; loop: true; dur: 1400; easing: easeInOutSine">
+        <!-- Pulsante Interattivo Interno -->
+        <a-plane 
+          position="0 -0.15 0.05" 
+          width="0.9" 
+          height="0.25" 
+          material="color: #ffffff">
+          <a-text 
+            value="TOCCA QUI PER TUTTOCAMPO" 
+            align="center" 
+            position="0 0 0.01" 
+            scale="0.35 0.35 0.35" 
+            color="#0284c7" 
+            font="kelsonsans">
+          </a-text>
+        </a-plane>
+
       </a-plane>
 
     </a-entity>
