@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AR Caorso - Tuttocampo</title>
+  <title>AR Caorso - Facebook</title>
 
   <!-- Librerie A-Frame e MindAR -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
@@ -48,7 +48,7 @@
       <img id="shieldImg" src="./logo.png" crossorigin="anonymous">
     </a-assets>
 
-    <!-- Fotocamera con raycaster per rilevare i tocchi sul logo -->
+    <!-- Fotocamera con raycaster per intercettare il tocco sul logo -->
     <a-camera position="0 0 0" look-controls="enabled: false">
       <a-cursor 
         id="cursor"
@@ -82,8 +82,8 @@
       const shieldPlane = document.getElementById('shieldPlane');
       const targetEntity = document.getElementById('targetEntity');
 
-      // LINK CORRETTO estratto dalla tua foto
-      const targetUrl = "https://www.tuttocampo.it/EmiliaRomagna/SecondaCategoria/GironeBParma/Squadra/Caorso/1000541/Scheda";
+      // Nuova destinazione: Pagina Facebook ASD Caorso Calcio
+      const targetUrl = "https://facebook.com/people/ASD-Caorso-Calcio/100083386797167/";
       let isTargetVisible = false;
 
       // Fotocamera pronta
@@ -94,7 +94,7 @@
       // Target Trovato
       targetEntity.addEventListener("targetFound", () => {
         isTargetVisible = true;
-        statusMsg.innerText = "Logo Trovato! Toccalo per aprire Tuttocampo";
+        statusMsg.innerText = "Logo Trovato! Toccalo per aprire Facebook";
       });
 
       // Target Perso
@@ -103,13 +103,13 @@
         statusMsg.innerText = "Inquadra il logo";
       });
 
-      // 1. Click diretto sull'oggetto 3D (Logo AR)
+      // 1. Click diretto sul logo AR
       shieldPlane.addEventListener('click', (e) => {
         e.stopPropagation();
         window.location.href = targetUrl;
       });
 
-      // 2. Toccare lo schermo mentre il logo AR è inquadrato
+      // 2. Toccare lo schermo mentre il logo AR è visibile
       window.addEventListener('click', () => {
         if (isTargetVisible) {
           window.location.href = targetUrl;
