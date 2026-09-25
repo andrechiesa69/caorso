@@ -16,44 +16,41 @@
       overflow: hidden;
     }
 
-    /* Messaggio overlay durante il caricamento */
+    /* Overlay di caricamento temporaneo */
     #loading {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       background: rgba(0, 0, 0, 0.85);
       color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
+      padding: 15px 25px;
+      border-radius: 8px;
       font-family: Arial, sans-serif;
-      font-size: 18px;
+      font-size: 16px;
+      text-align: center;
       z-index: 99999;
-      padding: 20px;
-      box-sizing: border-box;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
 
-  <div id="loading">Caricamento fotocamera e AR in corso...<br><br>Consenti l'accesso alla fotocamera se richiesto.</div>
+  <div id="loading">Inquadra l'immagine/logo...</div>
 
   <a-scene 
-    mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: no; uiError: yes;" 
+    mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: no; uiError: no;" 
     color-space="sRGB" 
     renderer="colorManagement: true, physicallyCorrectLights" 
     vr-mode-ui="enabled: false" 
     device-orientation-permission-ui="enabled: false">
 
     <a-assets>
-      <!-- Immagine dello Scudo / Logo Tuttocampo -->
-      <img id="shieldImg" src="https://www.tuttocampo.it/Web/Images/Header/logo.png" crossorigin="anonymous">
+      <!-- Utilizza il file logo.png presente nella repository GitHub -->
+      <img id="shieldImg" src="./logo.png" crossorigin="anonymous">
     </a-assets>
 
-    <!-- Fotocamera con cursore abilitato per i tocchi su schermi mobile -->
+    <!-- Fotocamera con cursore per abilitare i tocchi su mobile -->
     <a-camera position="0 0 0" look-controls="enabled: false">
       <a-cursor 
         id="cursor"
@@ -63,7 +60,7 @@
       </a-cursor>
     </a-camera>
 
-    <!-- Target AR (Corrisponde all'immagine con indice 0) -->
+    <!-- Target AR (Index 0) -->
     <a-entity id="targetEntity" mindar-image-target="targetIndex: 0">
       
       <!-- Scudo/Pulsante Cliccabile -->
@@ -88,17 +85,17 @@
       const loadingEl = document.getElementById('loading');
       const shieldPlane = document.getElementById('shieldPlane');
 
-      // Rimuove il loader non appena MindAR ha avviato la fotocamera
+      // Nasconde la scritta di caricamento non appena MindAR è pronto
       sceneEl.addEventListener("arReady", () => {
         loadingEl.style.display = "none";
       });
 
-      // Gestione errori di avvio (es. file .mind non trovato o fotocamera bloccata)
-      sceneEl.addEventListener("arError", (event) => {
-        loadingEl.innerHTML = "<span style='color: #ff6b6b;'>Errore nell'avvio dell'AR.</span><br>Verifica che il file <b>targets.mind</b> sia presente su GitHub e di aver concesso i permessi per la fotocamera.";
-      });
+      // Sicurezza extra: nasconde comunque la scritta dopo 3 secondi dall'avvio
+      setTimeout(() => {
+        if (loadingEl) loadingEl.style.display = "none";
+      }, 3000);
 
-      // Azione al click/tap sullo scudo
+      // Reindirizzamento al sito Tuttocampo al click sullo scudo
       shieldPlane.addEventListener('click', () => {
         window.location.href = "https://www.tuttocampo.it";
       });
