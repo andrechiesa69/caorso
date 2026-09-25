@@ -16,29 +16,33 @@
       overflow: hidden;
     }
 
-    /* Messaggio di caricamento iniziale */
+    /* Messaggio overlay durante il caricamento */
     #loading {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(0, 0, 0, 0.8);
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
       color: white;
-      padding: 15px 25px;
-      border-radius: 8px;
-      font-family: sans-serif;
-      font-size: 16px;
-      z-index: 9999;
-      pointer-events: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      z-index: 99999;
+      padding: 20px;
+      box-sizing: border-box;
     }
   </style>
 </head>
 <body>
 
-  <div id="loading">Caricamento fotocamera e AR...</div>
+  <div id="loading">Caricamento fotocamera e AR in corso...<br><br>Consenti l'accesso alla fotocamera se richiesto.</div>
 
   <a-scene 
-    mindar-image="imageTargetSrc: ./targets.mind;" 
+    mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: no; uiError: yes;" 
     color-space="sRGB" 
     renderer="colorManagement: true, physicallyCorrectLights" 
     vr-mode-ui="enabled: false" 
@@ -49,7 +53,7 @@
       <img id="shieldImg" src="https://www.tuttocampo.it/Web/Images/Header/logo.png" crossorigin="anonymous">
     </a-assets>
 
-    <!-- Fotocamera con Raggio Laser/Cursore per il Click su Mobile/Desktop -->
+    <!-- Fotocamera con cursore abilitato per i tocchi su schermi mobile -->
     <a-camera position="0 0 0" look-controls="enabled: false">
       <a-cursor 
         id="cursor"
@@ -59,10 +63,10 @@
       </a-cursor>
     </a-camera>
 
-    <!-- Target AR (Agganciato all'immagine 0 del file targets.mind) -->
+    <!-- Target AR (Corrisponde all'immagine con indice 0) -->
     <a-entity id="targetEntity" mindar-image-target="targetIndex: 0">
       
-      <!-- Scudo / Pulsante Cliccabile -->
+      <!-- Scudo/Pulsante Cliccabile -->
       <a-plane 
         id="shieldPlane"
         class="clickable"
@@ -71,7 +75,7 @@
         height="1" 
         width="1" 
         rotation="0 0 0"
-        transparent="true">
+        material="transparent: true; alphaTest: 0.5;">
       </a-plane>
 
     </a-entity>
@@ -83,26 +87,19 @@
       const sceneEl = document.querySelector('a-scene');
       const loadingEl = document.getElementById('loading');
       const shieldPlane = document.getElementById('shieldPlane');
-      const targetEntity = document.getElementById('targetEntity');
 
-      // Nasconde il loader quando la scena AR è pronta
-      sceneEl.addEventListener('render-start', () => {
-        loadingEl.style.display = 'none';
+      // Rimuove il loader non appena MindAR ha avviato la fotocamera
+      sceneEl.addEventListener("arReady", () => {
+        loadingEl.style.display = "none";
       });
 
-      // Evento quando l'immagine/barcode viene inquadrata
-      targetEntity.addEventListener("targetFound", () => {
-        console.log("Barcode rilevato!");
+      // Gestione errori di avvio (es. file .mind non trovato o fotocamera bloccata)
+      sceneEl.addEventListener("arError", (event) => {
+        loadingEl.innerHTML = "<span style='color: #ff6b6b;'>Errore nell'avvio dell'AR.</span><br>Verifica che il file <b>targets.mind</b> sia presente su GitHub e di aver concesso i permessi per la fotocamera.";
       });
 
-      // Evento quando l'immagine viene persa dalla fotocamera
-      targetEntity.addEventListener("targetLost", () => {
-        console.log("Barcode perso dal campo visivo.");
-      });
-
-      // Azione al CLICK sullo scudo
+      // Azione al click/tap sullo scudo
       shieldPlane.addEventListener('click', () => {
-        // Reindirizza al sito Tuttocampo
         window.location.href = "https://www.tuttocampo.it";
       });
     });
