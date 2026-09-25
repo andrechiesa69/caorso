@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AR US Caorso - Tuttocampo</title>
+  <title>AR A.S.D. Caorso - Tuttocampo</title>
 
   <!-- Libreria A-Frame -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
@@ -14,6 +14,7 @@
     body {
       margin: 0;
       overflow: hidden;
+      font-family: Arial, sans-serif;
     }
 
     /* Badge di stato in alto */
@@ -26,17 +27,43 @@
       color: #00ffcc;
       padding: 10px 20px;
       border-radius: 20px;
-      font-family: Arial, sans-serif;
       font-size: 14px;
       z-index: 99999;
       text-align: center;
       pointer-events: none;
+    }
+
+    /* Pulsante d'azione 2D per il reindirizzamento sicuro su Mobile */
+    #action-btn {
+      display: none; /* Nascosto di default */
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #0056b3;
+      color: white;
+      padding: 15px 30px;
+      font-size: 16px;
+      font-weight: bold;
+      border: 2px solid white;
+      border-radius: 30px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+      z-index: 999999;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    #action-btn:active {
+      background-color: #003d80;
     }
   </style>
 </head>
 <body>
 
   <div id="status-msg">Avvio fotocamera...</div>
+  
+  <!-- Pulsante reale HTML per garantire il click su Safari/iOS -->
+  <button id="action-btn">Vai alla pagina A.S.D. Caorso ➔</button>
 
   <a-scene 
     mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: no; uiError: no;" 
@@ -46,27 +73,15 @@
     device-orientation-permission-ui="enabled: false">
 
     <a-assets>
-      <!-- File logo.png presente nella repo -->
       <img id="shieldImg" src="./logo.png" crossorigin="anonymous">
     </a-assets>
 
-    <!-- Fotocamera con raycaster per intercettare i tocchi -->
-    <a-camera position="0 0 0" look-controls="enabled: false">
-      <a-cursor 
-        id="cursor"
-        raycaster="objects: .clickable"
-        fuse="false"
-        material="color: white; shader: flat">
-      </a-cursor>
-    </a-camera>
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
     <!-- Target AR (Index 0) -->
     <a-entity id="targetEntity" mindar-image-target="targetIndex: 0">
-      
-      <!-- Logo Cliccabile in Realtà Aumentata -->
       <a-plane 
         id="shieldPlane"
-        class="clickable"
         src="#shieldImg"
         position="0 0 0" 
         height="1" 
@@ -74,7 +89,6 @@
         rotation="0 0 0"
         material="transparent: true; alphaTest: 0.5;">
       </a-plane>
-
     </a-entity>
 
   </a-scene>
@@ -83,53 +97,32 @@
     document.addEventListener("DOMContentLoaded", () => {
       const sceneEl = document.querySelector('a-scene');
       const statusMsg = document.getElementById('status-msg');
-      const shieldPlane = document.getElementById('shieldPlane');
+      const actionBtn = document.getElementById('action-btn');
       const targetEntity = document.getElementById('targetEntity');
 
-      let isTargetVisible = false;
       const targetUrl = "https://www.tuttocampo.it/EmiliaRomagna/IT/Squadra/Caorso/920807";
 
-      // Fotocamera pronta
+      // Quando il sistema AR è pronto
       sceneEl.addEventListener("arReady", () => {
-        statusMsg.innerText = "Inquadra l'immagine target";
+        statusMsg.innerText = "Inquadra il logo A.S.D. Caorso";
       });
 
-      // Errore caricamento file .mind
-      sceneEl.addEventListener("arError", () => {
-        statusMsg.style.color = "#ff4d4d";
-        statusMsg.innerText = "Errore: verifica il file 'targets.mind'!";
-      });
-
-      // Riconoscimento del target
+      // Target Trovato: mostra il pulsante in basso per il click sicuro
       targetEntity.addEventListener("targetFound", () => {
-        isTargetVisible = true;
-        statusMsg.innerText = "Tocca il logo sullo schermo per aprire la pagina!";
+        statusMsg.innerText = "Logo Trovato!";
+        actionBtn.style.display = "block";
       });
 
-      // Target perso
+      // Target Perso: nasconde il pulsante
       targetEntity.addEventListener("targetLost", () => {
-        isTargetVisible = false;
-        statusMsg.innerText = "Inquadra l'immagine target";
+        statusMsg.innerText = "Inquadra il logo A.S.D. Caorso";
+        actionBtn.style.display = "none";
       });
 
-      // Metodo 1: Click 3D diretto sul piano del logo
-      shieldPlane.addEventListener('click', (e) => {
-        e.stopPropagation();
+      // Click sul pulsante 2D (funziona al 100% su iOS Safari)
+      actionBtn.addEventListener('click', () => {
         window.location.href = targetUrl;
       });
-
-      // Metodo 2: Tocco touch generico quando l'immagine AR è visibile a schermo
-      window.addEventListener('click', () => {
-        if (isTargetVisible) {
-          window.location.href = targetUrl;
-        }
-      });
-
-      window.addEventListener('touchstart', () => {
-        if (isTargetVisible) {
-          window.location.href = targetUrl;
-        }
-      }, { passive: true });
     });
   </script>
 
