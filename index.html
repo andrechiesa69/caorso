@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AR Tuttocampo - MindAR</title>
+  <title>AR US Caorso - Tuttocampo</title>
 
   <!-- Libreria A-Frame -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
@@ -22,7 +22,7 @@
       top: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.85);
       color: #00ffcc;
       padding: 10px 20px;
       border-radius: 20px;
@@ -50,7 +50,7 @@
       <img id="shieldImg" src="./logo.png" crossorigin="anonymous">
     </a-assets>
 
-    <!-- Fotocamera con cursore abilitato per i tocchi su mobile -->
+    <!-- Fotocamera con raycaster per intercettare i tocchi -->
     <a-camera position="0 0 0" look-controls="enabled: false">
       <a-cursor 
         id="cursor"
@@ -63,7 +63,7 @@
     <!-- Target AR (Index 0) -->
     <a-entity id="targetEntity" mindar-image-target="targetIndex: 0">
       
-      <!-- Logo Cliccabile -->
+      <!-- Logo Cliccabile in Realtà Aumentata -->
       <a-plane 
         id="shieldPlane"
         class="clickable"
@@ -86,6 +86,9 @@
       const shieldPlane = document.getElementById('shieldPlane');
       const targetEntity = document.getElementById('targetEntity');
 
+      let isTargetVisible = false;
+      const targetUrl = "https://www.tuttocampo.it/EmiliaRomagna/IT/Squadra/Caorso/920807";
+
       // Fotocamera pronta
       sceneEl.addEventListener("arReady", () => {
         statusMsg.innerText = "Inquadra l'immagine target";
@@ -94,23 +97,39 @@
       // Errore caricamento file .mind
       sceneEl.addEventListener("arError", () => {
         statusMsg.style.color = "#ff4d4d";
-        statusMsg.innerText = "Errore: rinomina il file in 'targets.mind'!";
+        statusMsg.innerText = "Errore: verifica il file 'targets.mind'!";
       });
 
       // Riconoscimento del target
       targetEntity.addEventListener("targetFound", () => {
-        statusMsg.innerText = "Target Trovato! Tocca il logo per procedere";
+        isTargetVisible = true;
+        statusMsg.innerText = "Tocca il logo sullo schermo per aprire la pagina!";
       });
 
       // Target perso
       targetEntity.addEventListener("targetLost", () => {
+        isTargetVisible = false;
         statusMsg.innerText = "Inquadra l'immagine target";
       });
 
-      // Reindirizzamento al click
-      shieldPlane.addEventListener('click', () => {
-        window.location.href = "https://www.tuttocampo.it";
+      // Metodo 1: Click 3D diretto sul piano del logo
+      shieldPlane.addEventListener('click', (e) => {
+        e.stopPropagation();
+        window.location.href = targetUrl;
       });
+
+      // Metodo 2: Tocco touch generico quando l'immagine AR è visibile a schermo
+      window.addEventListener('click', () => {
+        if (isTargetVisible) {
+          window.location.href = targetUrl;
+        }
+      });
+
+      window.addEventListener('touchstart', () => {
+        if (isTargetVisible) {
+          window.location.href = targetUrl;
+        }
+      }, { passive: true });
     });
   </script>
 
